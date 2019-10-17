@@ -3,7 +3,10 @@ import { ResponsiveContainer } from "recharts";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 export default () => {
-  const [data, setData] = useState();
+  const [data, setData] = useState([{metric: 'a', value: 12}, 
+                                    {metric: 'b', value: 10},
+                                    {metric: 'c', value: 8}
+                                  ]);
 
   return (
     <ResponsiveContainer width={700} height="80%">
@@ -17,7 +20,6 @@ export default () => {
         <Line type="monotone" dataKey="pv" stroke="#8884d8" />
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
       </LineChart>
-      <button onClick={() => setData(data['value'] + 1)}>Click to increase value.</button>
     </ResponsiveContainer>
   );
 };
