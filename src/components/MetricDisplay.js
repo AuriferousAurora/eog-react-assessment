@@ -65,14 +65,7 @@ export default () => {
 const MetricDisplay = () => {
   const classes = useStyles();
 
-  const [activeMetrics, setActiveMetrics] = useState();
-  //   "tubingPressure": false,
-  //   "flareTemp": false,
-  //   "injValveOpen": false,
-  //   "oilTemp": false,
-  //   "casingPressure": false,
-  //   "waterTemp": false,
-  // });
+  const [activeMetrics, setActiveMetrics] = useState([]);
 
   const metricName = "tubingPressure";
 
@@ -101,8 +94,10 @@ const MetricDisplay = () => {
   );
 
   const handleChange = name => event => {
-    // setValues({ ...values, [name]: event.target.value });
-    console.log(event.target.value);
+    if (name === "activeMetrics" && !activeMetrics.includes(event.target.value)) {
+      setActiveMetrics(prev => [...prev, event.target.value]);
+    }
+    console.log(activeMetrics);
   };
   // if (fetching) return <div>Loading...</div>;
 
@@ -147,7 +142,7 @@ const MetricDisplay = () => {
             select
             label="Select Metric"
             value={metricInputs}
-            onChange={handleChange('metricInputs')}
+            onChange={handleChange('activeMetrics')}
             SelectProps={{ MenuProps: { className: classes.menu, }, }}
             margin="normal">
             {metricInputs.map(option => (
