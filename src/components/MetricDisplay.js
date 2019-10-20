@@ -32,18 +32,7 @@ const client = createClient({
   url: "https://react.eogresources.com/graphql"
 });
 
-const query = `
-  query($metricName: String!) {
-    getLastKnownMeasurement(metricName: $metricName) {
-      metric
-      at
-      value
-      unit
-    }
-  }
-`;
-
-let lastKnownQuery = `
+const lastKnownQuery = `
 query($metricName: String!) {
   getLastKnownMeasurement(metricName: $metricName) {
     metric
@@ -52,7 +41,7 @@ query($metricName: String!) {
     unit
   }
 }
-`
+`;
 
 export default () => {
   return (
@@ -66,31 +55,25 @@ const MetricDisplay = () => {
   const classes = useStyles();
 
   const [activeMetrics, setActiveMetrics] = useState([]);
+  const [lastKnownMetrics, setLastKnownMetrics] = useState({});
 
   const metricName = "tubingPressure";
 
-  const [result] = useQuery({
-    query,
-    variables: {
-      metricName
-    }
+  const [lastKnownResult] = useQuery({ 
+    query: lastKnownQuery, 
+    variables: { metricName }
   });
+  console.log(lastKnownResult);
+
+  const { data, error } = lastKnownResult;
 
 
-
-  // const { fetching, data, error } = result;
-  
-  // Will throw an error when attempting to declare variable that bind data
-  // from unresolved query. Gotta include line 67.
   useEffect(
     () => {
-      if (!result.data) return;
-      // console.log(result.data.getLastKnownMeasurement);
-      // const { getLastKnownMeasurement } = result.data;
-      // console.log(getLastKnownMeasurement.metric);
-      // setActiveMetrics(getLastKnownMeasurement.metric)
+      setLastKnownMetrics([data]);
+      console.log(lastKnownMetrics)
     },
-    [result.data]
+    [data, error]
   );
 
   const handleChange = name => event => {
@@ -99,7 +82,6 @@ const MetricDisplay = () => {
     }
     console.log(activeMetrics);
   };
-  // if (fetching) return <div>Loading...</div>;
 
   const metricInputs = [
     {
@@ -132,6 +114,10 @@ const MetricDisplay = () => {
     <Provider value={client}>
       <div className={classes.metricHeader}>
         <div className={classes.metricHeader__cards}>
+          <div>
+              {/* <p>{lkName}</p>
+              <p>{lkValue} {lkUnit}</p> */}
+          </div>
         {activeMetrics}
         </div>
         <div className={classes.metricHeader__inputSelectionContainer}>
