@@ -3,12 +3,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useFavicon } from "react-use";
+import { ResponsiveContainer } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 const useStyles = makeStyles({
   metricHeader: {
     display: "flex",
-    height: "10%",
+    height: "20%",
     width: "100%",
   },
   metricHeader__cards: {
@@ -33,36 +34,26 @@ const client = createClient({
   url: "https://react.eogresources.com/graphql"
 });
 
-const lastKnownQuery = `
-query($metricName: String!) {
-  getLastKnownMeasurement(metricName: $metricName) {
-    metric
-    at
-    value
-    unit
-  }
-}
-`;
-
+const time = new Date().valueOf() - 60000;
 const allMeasurements = `{
   getMultipleMeasurements(input: [
     { metricName: "tubingPressure",
-      after: $time,
+      after: ${time},
     }, {
       metricName: "flareTemp",
-      after: $time,
+      after: ${time},
     }, {
       metricName: "injValveOpen",
-      after: $time,
+      after: ${time},
     },  {
       metricName: "oilTemp",
-      after: $time,
+      after: ${time},
     }, {
       metricName: "casingPressure",
-      after: $time,
+      after: ${time},
     }, {
       metricName: "waterTemp",
-      after: $time,
+      after: ${time},
     }
   ]) {
     metric
@@ -93,49 +84,13 @@ const MetricDisplay = () => {
                                                             "oilTemp": {},
                                                             "casingPressure": {},
                                                             "waterTemp": {} });
+  const [am, setAm] = useState();
+                                                          
 
-  const metrics = ["tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp"]
-
-  // for (let i = 0; i < metrics.length; i += 1) {
-  //   const metricName = metrics[0];
-    // const [lastKnownResult] = useQuery({ 
-    //   query: lastKnownQuery, 
-    //   variables: { metricName }
-    // });
-
-    // const { data, error } = lastKnownResult;
-
-    // if (!data) continue;
-    // const { getLastKnownMeasurement } = data;
-    // const glkm = getLastKnownMeasurement;
-    // setLastKnownMetrics({ [metrics[i]]: {"at": glkm.at,"unit": glkm.unit, "value": glkm.value, "active": false} });
-    // if (activeMetrics.includes(metrics[i])) { setLastKnownMetrics([metrics[i]]["active"] = true); }
-  // }
-
-
-  // const useLastKnownQueries = () => {
-  //   const tubingPressure = "tubingPressure";
-  //   const flareTemp = "flareTemp";
-  //   const injValveOpen = "injValveOpen";
-  //   const oilTemp = "oilTemp";
-  //   const casingPressure = "casingPressure";
-  //   const waterTemp = "waterTemp";
-
-  //   const tpResponse = useQuery({ query: lastKnownQuery, variables: { tubingPressure }});
-  //   const ftResponse = useQuery({ query: lastKnownQuery, variables: { flareTemp }});
-  //   const ivoResponse = useQuery({ query: lastKnownQuery, variables: { injValveOpen }});
-  //   const otResponse = useQuery({ query: lastKnownQuery, variables: { oilTemp }});
-  //   const cpResponse = useQuery({ query: lastKnownQuery, variables: { casingPressure }});
-  //   const wtResponse = useQuery({ query: lastKnownQuery, variables: { waterTemp }});
-
-  //   return [tpResponse, ftResponse, ivoResponse, otResponse, cpResponse, wtResponse];
-  // }
-
-  const d = new Date().valueOf() - 60000;
+  const metrics = ["tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp"];
 
   const [allMeasurementsResult] = useQuery({
-    query: allMeasurements,
-    variables: { d }
+    query: allMeasurements
   });
 
   const { fetching, data, error } = allMeasurementsResult
@@ -144,8 +99,18 @@ const MetricDisplay = () => {
     if (fetching) console.log("Fetching.");
     if (!data) return;
     if (error) console.log(error);  
-    console.log(data);
-  }, [fetching, data, error]);
+    const { getMultipleMeasurements } = data;
+    const tubingPressureData = []
+    // for (let i = 0; i < getMultipleMeasurements.length; i += 1) {
+
+    // }
+    const measurements = getMultipleMeasurements[0].measurements;
+    for (let i = 0; i < measurements.length; i += 1) {
+      tubingPressureData.push({"time": measurements[i].at, "value": measurements[i].value });
+    }
+    setAm(tubingPressureData);
+    console.log(am);
+  }, [fetching, data, error, am]);
 
   const handleChange = name => event => {
     if (name === "activeMetrics" && !activeMetrics.includes(event.target.value)) {
@@ -180,15 +145,12 @@ const MetricDisplay = () => {
     },
   ]
 
+  const abc = [1,2,3];
   return (
-    <Provider value={client}>
+    <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
         <div className={classes.metricHeader__cards}>
-          <div>
-              {/* <p>{lkName}</p>
-              <p>{lkValue} {lkUnit}</p> */}
-          </div>
-        {activeMetrics}
+          {activeMetrics}
         </div>
         <div className={classes.metricHeader__inputSelectionContainer}>
 
@@ -210,7 +172,19 @@ const MetricDisplay = () => {
 
         </div>
       </div>
-    </Provider>
-
+      
+      <ResponsiveContainer width={1000} height="80%">
+        <LineChart width={700} height={250} data={am}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="value" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>
+    </ResponsiveContainer>
+    </div>
   );
 };
