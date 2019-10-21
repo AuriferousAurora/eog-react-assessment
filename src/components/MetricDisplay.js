@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
+import { useFavicon } from "react-use";
 
 const useStyles = makeStyles({
   metricHeader: {
@@ -43,6 +44,37 @@ query($metricName: String!) {
 }
 `;
 
+const allMeasurements = `{
+  getMultipleMeasurements(input: [
+    { metricName: "tubingPressure",
+      after: $time,
+    }, {
+      metricName: "flareTemp",
+      after: $time,
+    }, {
+      metricName: "injValveOpen",
+      after: $time,
+    },  {
+      metricName: "oilTemp",
+      after: $time,
+    }, {
+      metricName: "casingPressure",
+      after: $time,
+    }, {
+      metricName: "waterTemp",
+      after: $time,
+    }
+  ]) {
+    metric
+    measurements {
+      at
+      value
+      unit
+    }
+  }
+}
+`;
+
 export default () => {
   return (
     <Provider value={client}>
@@ -55,32 +87,70 @@ const MetricDisplay = () => {
   const classes = useStyles();
 
   const [activeMetrics, setActiveMetrics] = useState([]);
-  const [lastKnownMetrics, setLastKnownMetrics] = useState({});
+  const [lastKnownMetrics, setLastKnownMetrics] = useState({"tubingPressure": {},
+                                                            "flareTemp": {},
+                                                            "injValveOpen": {},
+                                                            "oilTemp": {},
+                                                            "casingPressure": {},
+                                                            "waterTemp": {} });
 
-  const metricName = "tubingPressure";
+  const metrics = ["tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp"]
 
-  const [lastKnownResult] = useQuery({ 
-    query: lastKnownQuery, 
-    variables: { metricName }
+  // for (let i = 0; i < metrics.length; i += 1) {
+  //   const metricName = metrics[0];
+    // const [lastKnownResult] = useQuery({ 
+    //   query: lastKnownQuery, 
+    //   variables: { metricName }
+    // });
+
+    // const { data, error } = lastKnownResult;
+
+    // if (!data) continue;
+    // const { getLastKnownMeasurement } = data;
+    // const glkm = getLastKnownMeasurement;
+    // setLastKnownMetrics({ [metrics[i]]: {"at": glkm.at,"unit": glkm.unit, "value": glkm.value, "active": false} });
+    // if (activeMetrics.includes(metrics[i])) { setLastKnownMetrics([metrics[i]]["active"] = true); }
+  // }
+
+
+  // const useLastKnownQueries = () => {
+  //   const tubingPressure = "tubingPressure";
+  //   const flareTemp = "flareTemp";
+  //   const injValveOpen = "injValveOpen";
+  //   const oilTemp = "oilTemp";
+  //   const casingPressure = "casingPressure";
+  //   const waterTemp = "waterTemp";
+
+  //   const tpResponse = useQuery({ query: lastKnownQuery, variables: { tubingPressure }});
+  //   const ftResponse = useQuery({ query: lastKnownQuery, variables: { flareTemp }});
+  //   const ivoResponse = useQuery({ query: lastKnownQuery, variables: { injValveOpen }});
+  //   const otResponse = useQuery({ query: lastKnownQuery, variables: { oilTemp }});
+  //   const cpResponse = useQuery({ query: lastKnownQuery, variables: { casingPressure }});
+  //   const wtResponse = useQuery({ query: lastKnownQuery, variables: { waterTemp }});
+
+  //   return [tpResponse, ftResponse, ivoResponse, otResponse, cpResponse, wtResponse];
+  // }
+
+  const d = new Date().valueOf() - 60000;
+
+  const [allMeasurementsResult] = useQuery({
+    query: allMeasurements,
+    variables: { d }
   });
-  console.log(lastKnownResult);
 
-  const { data, error } = lastKnownResult;
+  const { fetching, data, error } = allMeasurementsResult
 
-
-  useEffect(
-    () => {
-      setLastKnownMetrics([data]);
-      console.log(lastKnownMetrics)
-    },
-    [data, error]
-  );
+  useEffect(() => {
+    if (fetching) console.log("Fetching.");
+    if (!data) return;
+    if (error) console.log(error);  
+    console.log(data);
+  }, [fetching, data, error]);
 
   const handleChange = name => event => {
     if (name === "activeMetrics" && !activeMetrics.includes(event.target.value)) {
       setActiveMetrics(prev => [...prev, event.target.value]);
     }
-    console.log(activeMetrics);
   };
 
   const metricInputs = [
