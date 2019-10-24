@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { ResponsiveContainer } from "recharts";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles({
   metricHeader: {
@@ -35,7 +36,7 @@ const client = createClient({
 });
 
 const time = new Date().valueOf() - 60000;
-const allMeasurements = `{
+const allMeasurementsQuery = `{
   getMultipleMeasurements(input: [
     { metricName: "tubingPressure",
       after: ${time},
@@ -78,39 +79,30 @@ const MetricDisplay = () => {
   const classes = useStyles();
 
   const [activeMetrics, setActiveMetrics] = useState([]);
-  const [lastKnownMetrics, setLastKnownMetrics] = useState({"tubingPressure": {},
-                                                            "flareTemp": {},
-                                                            "injValveOpen": {},
-                                                            "oilTemp": {},
-                                                            "casingPressure": {},
-                                                            "waterTemp": {} });
-  const [am, setAm] = useState();
-                                                          
-
-  const metrics = ["tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp"];
+  const [allMetrics, setAllMetrics] = useState({});
 
   const [allMeasurementsResult] = useQuery({
-    query: allMeasurements
+    query: allMeasurementsQuery
   });
 
   const { fetching, data, error } = allMeasurementsResult
 
   useEffect(() => {
-    if (fetching) console.log("Fetching.");
-    if (!data) return;
-    if (error) console.log(error);  
-    const { getMultipleMeasurements } = data;
-    const tubingPressureData = []
-    // for (let i = 0; i < getMultipleMeasurements.length; i += 1) {
-
-    // }
-    const measurements = getMultipleMeasurements[0].measurements;
-    for (let i = 0; i < measurements.length; i += 1) {
-      tubingPressureData.push({"time": measurements[i].at, "value": measurements[i].value });
+    if (error) {
+      console.log(error);  
+      return;
     }
-    setAm(tubingPressureData);
-    console.log(am);
-  }, [fetching, data, error, am]);
+    if (!data) return;
+    const { getMultipleMeasurements } = data;
+    const [tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp] = getMultipleMeasurements;
+    setAllMetrics({"tubingPressure": tubingPressure.measurements,
+                   "flareTemp": flareTemp.measurements,
+                   "injValveOpen": injValveOpen.measurements,
+                   "oilTemp": oilTemp.measurements,
+                   "casingPressure": casingPressure.measurements,
+                   "waterTemp": waterTemp.measurements,
+  });
+  }, [data, error, setAllMetrics]);
 
   const handleChange = name => event => {
     if (name === "activeMetrics" && !activeMetrics.includes(event.target.value)) {
@@ -145,7 +137,8 @@ const MetricDisplay = () => {
     },
   ]
 
-  const abc = [1,2,3];
+  if (fetching || allMetrics.tubingPressure === undefined) return <LinearProgress />;
+
   return (
     <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
@@ -172,8 +165,11 @@ const MetricDisplay = () => {
 
         </div>
       </div>
+        {allMetrics.tubingPressure[0].at}
+      <div>
+      </div>
       
-      <ResponsiveContainer width={1000} height="80%">
+      {/* <ResponsiveContainer width={1000} height="80%">
         <LineChart width={700} height={250} data={am}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -184,7 +180,7 @@ const MetricDisplay = () => {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
         </LineChart>
-    </ResponsiveContainer>
+    </ResponsiveContainer> */}
     </div>
   );
 };
