@@ -23,7 +23,7 @@ query($latLong: WeatherQuery!) {
 `;
 
 // Function to be used as the redux selector. Accepts state objects and adds variables from
-// line 27 to state.weather using destructured syntax.
+// line 28 to state.weather using destructured syntax.
 const getWeather = state => {
   const { temperatureinFahrenheit, description, locationName } = state.weather;
   return {
