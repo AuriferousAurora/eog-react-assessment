@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Label } from "recharts";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles({
@@ -187,24 +187,17 @@ const MetricDisplay = () => {
 
         </div>
       </div>
-        <p>{allMetrics.tubingPressure[0].at}</p>
-        <p>{allMetrics.flareTemp[1].at}</p>
-        <p>{allMetrics.injValveOpen[2].at}</p>
-        <p>{allMetrics.oilTemp[3].at}</p>
-        <p>{allMetrics.casingPressure[4].at}</p>
-        <p>{allMetrics.waterTemp[100].at}</p>
-      <div>
-      </div>
       
-        <LineChart width={700} height={250} data={allMetrics.tubingPressure}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="at" />
-          <YAxis dataKey="value"/>
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
-        </LineChart>
+      <LineChart width={1000} height={400} data={allMetrics.tubingPressure}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="at" interval={200}/>
+        <YAxis dataKey="value">
+          <Label value={allMetrics.tubingPressure[0].unit} angle={-90} position="insideLeft" />
+        </YAxis>
+        <Tooltip />
+        <Line type="monotone" dataKey="value" stroke="#8884d8" dot={false} />
+      </LineChart>
     </div>
   );
   }
