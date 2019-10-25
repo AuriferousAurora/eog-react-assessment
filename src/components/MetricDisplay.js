@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { ResponsiveContainer } from "recharts";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
@@ -35,7 +34,7 @@ const client = createClient({
   url: "https://react.eogresources.com/graphql"
 });
 
-const time = new Date().valueOf() - 60000;
+const time = new Date().valueOf() - 1800000;
 const allMeasurementsQuery = `{
   getMultipleMeasurements(input: [
     { metricName: "tubingPressure",
@@ -95,6 +94,7 @@ const MetricDisplay = () => {
     if (!data) return;
     const { getMultipleMeasurements } = data;
     const [tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp] = getMultipleMeasurements;
+
     setAllMetrics({"tubingPressure": tubingPressure.measurements,
                    "flareTemp": flareTemp.measurements,
                    "injValveOpen": injValveOpen.measurements,
@@ -137,7 +137,29 @@ const MetricDisplay = () => {
     },
   ]
 
-  if (fetching || allMetrics.tubingPressure === undefined) return <LinearProgress />;
+ 
+
+  if (fetching || allMetrics.tubingPressure === undefined) { return <LinearProgress />;
+  } else {
+
+  const convertMilliseconds = (stateObject) => {
+    for (let i = 0; i < stateObject.length; i += 1) {
+      const d = new Date(stateObject[i].at);
+      let hours = d.getHours();
+      if (hours > 12) hours = hours - 12;
+      const minutes = d.getMinutes();
+      stateObject[i].at = `${hours}:${minutes}`;
+    }
+  }
+
+  convertMilliseconds(allMetrics.tubingPressure);
+  convertMilliseconds(allMetrics.flareTemp);
+  convertMilliseconds(allMetrics.injValveOpen);
+  convertMilliseconds(allMetrics.oilTemp);
+  convertMilliseconds(allMetrics.casingPressure);
+  convertMilliseconds(allMetrics.waterTemp);
+
+  console.log(allMetrics);
 
   return (
     <div className={classes.metricWrapper}>
@@ -165,22 +187,25 @@ const MetricDisplay = () => {
 
         </div>
       </div>
-        {allMetrics.tubingPressure[0].at}
+        <p>{allMetrics.tubingPressure[0].at}</p>
+        <p>{allMetrics.flareTemp[1].at}</p>
+        <p>{allMetrics.injValveOpen[2].at}</p>
+        <p>{allMetrics.oilTemp[3].at}</p>
+        <p>{allMetrics.casingPressure[4].at}</p>
+        <p>{allMetrics.waterTemp[100].at}</p>
       <div>
       </div>
       
-      {/* <ResponsiveContainer width={1000} height="80%">
-        <LineChart width={700} height={250} data={am}
+        <LineChart width={700} height={250} data={allMetrics.tubingPressure}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="value" />
-          <YAxis />
+          <XAxis dataKey="at" />
+          <YAxis dataKey="value"/>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" />
         </LineChart>
-    </ResponsiveContainer> */}
     </div>
   );
+  }
 };
