@@ -159,8 +159,6 @@ const MetricDisplay = () => {
   convertMilliseconds(allMetrics.casingPressure);
   convertMilliseconds(allMetrics.waterTemp);
 
-  console.log(allMetrics);
-
   return (
     <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
@@ -197,6 +195,7 @@ const MetricDisplay = () => {
         </YAxis>
         <Tooltip />
         <Line type="monotone" dataKey="value" stroke="#8884d8" dot={false} />
+
       </LineChart>
     </div>
   );
