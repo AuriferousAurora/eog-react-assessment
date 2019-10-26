@@ -86,6 +86,16 @@ const MetricDisplay = () => {
 
   const { fetching, data, error } = allMeasurementsResult
 
+  const convertMilliseconds = (stateObject) => {
+    for (let i = 0; i < stateObject.length; i += 1) {
+      const d = new Date(stateObject[i].at);
+      let hours = d.getHours();
+      if (hours > 12) hours = hours - 12;
+      const minutes = d.getMinutes();
+      stateObject[i].at = `${hours}:${minutes}`;
+    }
+  }
+
   useEffect(() => {
     if (error) {
       console.log(error);  
@@ -135,20 +145,10 @@ const MetricDisplay = () => {
     },
   ]
 
- 
-
   if (fetching || allMetrics.tubingPressure === undefined) { return <LinearProgress />;
   } else {
 
-  const convertMilliseconds = (stateObject) => {
-    for (let i = 0; i < stateObject.length; i += 1) {
-      const d = new Date(stateObject[i].at);
-      let hours = d.getHours();
-      if (hours > 12) hours = hours - 12;
-      const minutes = d.getMinutes();
-      stateObject[i].at = `${hours}:${minutes}`;
-    }
-  }
+
 
   convertMilliseconds(allMetrics.tubingPressure);
   convertMilliseconds(allMetrics.flareTemp);
@@ -171,7 +171,7 @@ const MetricDisplay = () => {
     }
     chartData.push(chartItem);
   }
-  console.log(chartData);
+
   return (
     <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
