@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Label } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles({
@@ -94,14 +94,12 @@ const MetricDisplay = () => {
     if (!data) return;
     const { getMultipleMeasurements } = data;
     const [tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp] = getMultipleMeasurements;
-
-    setAllMetrics({"tubingPressure": tubingPressure.measurements,
-                   "flareTemp": flareTemp.measurements,
+    setAllMetrics({"tubingPressure": tubingPressure.measurements, 
+                   "flareTemp": flareTemp.measurements, 
                    "injValveOpen": injValveOpen.measurements,
-                   "oilTemp": oilTemp.measurements,
-                   "casingPressure": casingPressure.measurements,
-                   "waterTemp": waterTemp.measurements,
-  });
+                   "oilTemp": oilTemp.measurements, 
+                   "casingPressure": casingPressure.measurements, 
+                   "waterTemp": waterTemp.measurements});
   }, [data, error, setAllMetrics]);
 
   const handleChange = name => event => {
@@ -159,6 +157,21 @@ const MetricDisplay = () => {
   convertMilliseconds(allMetrics.casingPressure);
   convertMilliseconds(allMetrics.waterTemp);
 
+  const dataKeyArray = Object.keys(allMetrics);
+  const arrayLength = allMetrics[dataKeyArray[0]].length;
+  const objLength = dataKeyArray.length;
+
+  let chartData = [];
+
+  for (let i = 0; i < arrayLength; i += 1) {
+    let chartItem = {};
+    for (let j = 0; j < objLength; j += 1) {
+      if (j === 0) chartItem["time"] = allMetrics[dataKeyArray[j]][i].at;
+      chartItem[dataKeyArray[j] + "Value"] = allMetrics[dataKeyArray[j]][i].value 
+    }
+    chartData.push(chartItem);
+  }
+  console.log(chartData);
   return (
     <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
@@ -186,16 +199,22 @@ const MetricDisplay = () => {
         </div>
       </div>
       
-      <LineChart width={1000} height={400} data={allMetrics.tubingPressure}
+      <LineChart width={1200} height={400} data={chartData}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="at" interval={200}/>
-        <YAxis dataKey="value">
-          <Label value={allMetrics.tubingPressure[0].unit} angle={-90} position="insideLeft" />
-        </YAxis>
-        <Tooltip />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" dot={false} />
-
+        <XAxis dataKey="time" interval={200}/>
+        <YAxis yAxisId="tubingPressure" />
+        <YAxis yAxisId="flareTemp" />
+        <YAxis yAxisId="injValveOpen" />
+        <YAxis yAxisId="oilTemp" />
+        <YAxis yAxisId="casingPressure" />
+        <YAxis yAxisId="waterTemp" />
+        <Line yAxisId="tubingPressure" type="monotone" dataKey="tubingPressureValue" stroke="#8884d8" dot={false} />
+        <Line yAxisId="flareTemp" type="monotone" dataKey="flareTempValue" stroke="#c33c54" dot={false} />
+        <Line yAxisId="injValveOpen" type="monotone" dataKey="injValveOpenValue" stroke="#7bc950" dot={false} />
+        <Line yAxisId="oilTemp" type="monotone" dataKey="oilTempValue" stroke="#ddf0ff" dot={false} />
+        <Line yAxisId="casingPressure" type="monotone" dataKey="casingPressureValue" stroke="#e9ce2c" dot={false} />
+        <Line yAxisId="waterTemp" type="monotone" dataKey="waterTempValue" stroke="#03f7eb" dot={false} />
       </LineChart>
     </div>
   );
