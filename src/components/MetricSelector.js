@@ -4,13 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles({
-  metricHeader__inputSelectionContainer: {
-    alignItems: "center",
-    display: "flex",
-    justifyContent: "start",
-    height: "100%",
-    width: "20%",
-  },
   metricHeader__inputSelection: {
     background: "white",
     fontSize: "2em",

@@ -50,17 +50,11 @@ const useStyles = makeStyles({
     height: "100%",
     width: "20%",
   },
-  metricHeader__inputSelection: {
-    background: "white",
-    fontSize: "2em",
-    width: "70%",
-  },
   metricBody__chartContainer: {
     alignItems: "center",
     display: "flex",
     height: "100%",
     justifyContent: "center",
-
   }
 });
 
@@ -188,40 +182,6 @@ const MetricDisplay = () => {
   if (fetching || allMetrics.tubingPressure === undefined) { return <LinearProgress />;
   } else {
 
-  const convertMilliseconds = (stateObject) => {
-    for (let i = 0; i < stateObject.length; i += 1) {
-      const d = new Date(stateObject[i].at);
-      let hours = d.getHours();
-      if (hours > 12) hours = hours - 12;
-      const minutes = d.getMinutes();
-      stateObject[i].at = `${hours}:${minutes}`;
-    }
-  }
-  
-  if (typeof(allMetrics.tubingPressure[0].at) === "number") {
-    convertMilliseconds(allMetrics.tubingPressure);
-    convertMilliseconds(allMetrics.flareTemp);
-    convertMilliseconds(allMetrics.injValveOpen);
-    convertMilliseconds(allMetrics.oilTemp);
-    convertMilliseconds(allMetrics.casingPressure);
-    convertMilliseconds(allMetrics.waterTemp);
-  }
-
-  const dataKeyArray = Object.keys(allMetrics);
-  const arrayLength = allMetrics[dataKeyArray[0]].length;
-  const objLength = dataKeyArray.length;
-
-  let chartData = [];
-
-  for (let i = 0; i < arrayLength; i += 1) {
-    let chartItem = {};
-    for (let j = 0; j < objLength; j += 1) {
-      if (j === 0) chartItem["time"] = allMetrics[dataKeyArray[j]][i].at;
-      chartItem[dataKeyArray[j] + "Value"] = allMetrics[dataKeyArray[j]][i].value 
-    }
-    chartData.push(chartItem);
-  }
-
   const cards = activeMetrics.map((metricName) => 
     <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
       <span>{metricName}</span>
@@ -242,7 +202,9 @@ const MetricDisplay = () => {
         </div>
       </div>
       <div className={classes.metricBody__chartContainer}>
-        {/* <HistoricMetrics /> */}
+        <HistoricMetrics 
+          activeMetrics={activeMetrics} setActiveMetrics={setActiveMetrics}
+          allMetrics={allMetrics} latestMetrics={latestMetrics}/>
       </div>
 
     </div>
