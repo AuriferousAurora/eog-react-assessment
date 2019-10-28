@@ -63,7 +63,7 @@ const client = createClient({
 });
 
 const time = new Date().valueOf() - 1800000;
-const allMeasurementsQuery = `{
+const query = `{
   getMultipleMeasurements(input: [
     { metricName: "tubingPressure",
       after: ${time},
@@ -90,9 +90,40 @@ const allMeasurementsQuery = `{
       value
       unit
     }
+  },
+  tubingPressureLatest: getLastKnownMeasurement(metricName: "tubingPressure") {
+    metric
+    value
+    unit
+  },
+  flareTempLatest: getLastKnownMeasurement(metricName: "flareTemp") {
+    metric
+    value
+    unit
+  },
+  injValveOpenLatest: getLastKnownMeasurement(metricName: "injValveOpen") {
+    metric
+    value
+    unit
+  },
+  oilTempLatest: getLastKnownMeasurement(metricName: "oilTemp") {
+    metric
+    value
+    unit
+  },
+  casingPressureLatest: getLastKnownMeasurement(metricName: "casingPressure") {
+    metric
+    value
+    unit
+  },
+  waterTempLatest: getLastKnownMeasurement(metricName: "waterTemp") {
+    metric
+    value
+    unit
   }
 }
 `;
+
 
 export default () => {
   return (
@@ -107,12 +138,13 @@ const MetricDisplay = () => {
 
   const [activeMetrics, setActiveMetrics] = useState([]);
   const [allMetrics, setAllMetrics] = useState({});
+  const [latestMetrics, setLatestMetrics] = useState({});
 
-  const [allMeasurementsResult] = useQuery({
-    query: allMeasurementsQuery
+  const [result] = useQuery({
+    query: query
   });
 
-  const { fetching, data, error } = allMeasurementsResult
+  const { fetching, data, error } = result
 
   useEffect(() => {
     if (error) {
@@ -122,13 +154,25 @@ const MetricDisplay = () => {
     if (!data) return;
     const { getMultipleMeasurements } = data;
     const [tubingPressure, flareTemp, injValveOpen, oilTemp, casingPressure, waterTemp] = getMultipleMeasurements;
+
     setAllMetrics({"tubingPressure": tubingPressure.measurements, 
                    "flareTemp": flareTemp.measurements, 
                    "injValveOpen": injValveOpen.measurements,
                    "oilTemp": oilTemp.measurements, 
                    "casingPressure": casingPressure.measurements, 
                    "waterTemp": waterTemp.measurements});
-  }, [data, error, setAllMetrics]);
+
+    const {tubingPressureLatest, flareTempLatest, injValveOpenLatest, oilTempLatest, casingPressureLatest, waterTempLatest } = data;
+    console.log(tubingPressureLatest);
+
+    setLatestMetrics({"tubingPressure": tubingPressureLatest, 
+                      "flareTemp": flareTempLatest, 
+                      "injValveOpen": injValveOpenLatest,
+                      "oilTemp": oilTempLatest, 
+                      "casingPressure": casingPressureLatest, 
+                      "waterTemp": waterTempLatest});
+
+  }, [data, error, setAllMetrics, setLatestMetrics]);
 
   const handleChange = name => event => {
     if (name === "activeMetrics" && !activeMetrics.includes(event.target.value)) {
@@ -205,7 +249,10 @@ const MetricDisplay = () => {
   }
 
   const cards = activeMetrics.map((metricName) => 
-    <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>{metricName}</div>
+    <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
+      {metricName}
+      {latestMetrics[metricName].value}
+      </div>
   );
 
   return (
