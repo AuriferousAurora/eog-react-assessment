@@ -3,18 +3,18 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
 
 export default (props) => {
 
-  const metrics = Object.keys(props.allMetrics);
-  const objLength = metrics.length;
-  const arrayLength = props.allMetrics[metrics[0]].length;
-
   const convertMilliseconds = (allMetrics) => {
-    for (let i = 0; i < objLength; i += 1) {
-      for (let j = 0; j < arrayLength; j += 1) {
-        const date = new Date(allMetrics[metrics[i]][j].at);
+    const cMetrics = Object.keys(allMetrics);
+    const cObjLength = cMetrics.length;
+    const cArrayLength = allMetrics[cMetrics[0]].length;
+
+    for (let i = 0; i < cObjLength; i += 1) {
+      for (let j = 0; j < cArrayLength; j += 1) {
+        const date = new Date(allMetrics[cMetrics[i]][j].at);
         let hours = date.getHours();
         if (hours > 12) hours = hours - 12;
         const minutes = date.getMinutes();
-        allMetrics[metrics[i]][j].at = `${hours}:${minutes}`;
+        allMetrics[cMetrics[i]][j].at = `${hours}:${minutes}`;
       }
     }
   }
@@ -22,6 +22,10 @@ export default (props) => {
   if (typeof(props.allMetrics.tubingPressure[0].at) === "number") convertMilliseconds(props.allMetrics);
 
   let chartData = [];
+
+  const metrics = Object.keys(props.allMetrics);
+  const objLength = metrics.length;
+  const arrayLength = props.allMetrics[metrics[0]].length;
 
   for (let i = 0; i < arrayLength; i += 1) {
     let chartItem = {};
