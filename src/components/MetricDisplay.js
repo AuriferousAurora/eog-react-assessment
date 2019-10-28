@@ -347,7 +347,6 @@ const MetricDisplay = () => {
           <Line 
             yAxisId="waterTemp" type="monotone" dataKey="waterTempValue" 
             stroke="#03f7eb" dot={false} isAnimationActive={false} /> : ''}
-
           <Tooltip />
         </LineChart>
 
