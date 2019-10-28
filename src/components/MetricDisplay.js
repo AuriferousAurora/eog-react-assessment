@@ -27,6 +27,9 @@ const useStyles = makeStyles({
   },
   metricHeader__inputSelection: {
     width: "50%",
+  },
+  hidden: {
+    display: "hidden",
   }
 });
 
@@ -205,12 +208,14 @@ const MetricDisplay = () => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="time" interval={200}/>
-        <YAxis yAxisId="tubingPressure" />
-        <YAxis yAxisId="flareTemp" />
-        <YAxis yAxisId="injValveOpen" />
-        <YAxis yAxisId="oilTemp" />
-        <YAxis yAxisId="casingPressure" />
-        <YAxis yAxisId="waterTemp" />
+
+        <YAxis yAxisId="tubingPressure" hide={activeMetrics.includes("tubingPressure") ? false : true} />
+        <YAxis yAxisId="flareTemp" hide={activeMetrics.includes("flareTemp") ? false : true} />
+        <YAxis yAxisId="injValveOpen" hide={activeMetrics.includes("injValveOpen") ? false : true} />
+        <YAxis yAxisId="oilTemp" hide={activeMetrics.includes("oilTemp") ? false : true} />
+        <YAxis yAxisId="casingPressure" hide={activeMetrics.includes("casingPressure") ? false : true} />
+        <YAxis yAxisId="waterTemp" hide={activeMetrics.includes("waterTemp") ? false : true} />
+
         {activeMetrics.includes("tubingPressure") ?
         <Line yAxisId="tubingPressure" type="monotone" dataKey="tubingPressureValue" stroke="#8884d8" dot={false} /> : ''}
         {activeMetrics.includes("flareTemp") ?
