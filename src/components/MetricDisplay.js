@@ -32,10 +32,15 @@ const useStyles = makeStyles({
     borderRadius: "5px",
     color: "white",
     display: "flex",
+    flexDirection: "column",
     fontSize: "1.3em",
     height: "70%",
     margin: "0.8em",
     padding: "1em",
+  },
+  close: {
+    color: "red",
+    cursor: "pointer",
   },
   metricHeader__inputSelectionContainer: {
     alignItems: "center",
@@ -141,7 +146,9 @@ const MetricDisplay = () => {
   const [latestMetrics, setLatestMetrics] = useState({});
 
   const [result] = useQuery({
-    query: query
+    query: query,
+    requestPolicy: 'cache-and-network',
+    pollInterval: 1300
   });
 
   const { fetching, data, error } = result
@@ -250,9 +257,11 @@ const MetricDisplay = () => {
 
   const cards = activeMetrics.map((metricName) => 
     <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
-      {metricName}
-      {latestMetrics[metricName].value}
-      </div>
+      <span>{metricName}</span>
+      <span>{latestMetrics[metricName].value}</span>
+      <span/>
+      <span className={classes.close}>[Remove]</span>
+    </div>
   );
 
   return (
@@ -284,8 +293,10 @@ const MetricDisplay = () => {
 
       <div className={classes.metricBody__chartContainer}>
       
-        <LineChart width={1200} height={400} data={chartData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <LineChart 
+          width={1200} height={400} data={chartData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          isAnimationActive={false}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" interval={200}/>
 
@@ -303,7 +314,7 @@ const MetricDisplay = () => {
           {activeMetrics.includes("injValveOpen") ?
           <Line yAxisId="injValveOpen" type="monotone" dataKey="injValveOpenValue" stroke="#7bc950" dot={false} /> : ''}
           {activeMetrics.includes("oilTemp") ?
-          <Line yAxisId="oilTemp" type="monotone" dataKey="oilTempValue" stroke="#ddf0ff" dot={false} /> : ''}
+          <Line yAxisId="oilTemp" type="monotone" dataKey="oilTempValue" stroke="#e11584" dot={false} /> : ''}
           {activeMetrics.includes("casingPressure") ?
           <Line yAxisId="casingPressure" type="monotone" dataKey="casingPressureValue" stroke="#e9ce2c" dot={false} /> : ''}
           {activeMetrics.includes("waterTemp") ?
