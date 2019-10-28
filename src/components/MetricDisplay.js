@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles({
@@ -19,9 +19,21 @@ const useStyles = makeStyles({
     width: "100%",
   },
   metricHeader__cardContainer: {
+    alignItems: "center",
+    display: "flex",
     height: "100%",
+    justifyContent: "flex-start",
     width: "70%",
-    background: "blue",
+  },
+  metricHeader__card: {
+    alignItems: "center",
+    background: "rgb(39,49,66)",
+    borderRadius: "5px",
+    color: "white",
+    display: "flex",
+    height: "70%",
+    margin: "1em",
+    padding: "1em",
   },
   metricHeader__inputSelectionContainer: {
     alignItems: "center",
@@ -29,10 +41,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     height: "100%",
     width: "30%",
-    background: "red",
   },
   metricHeader__inputSelection: {
-    width: "50%",
+    background: "white",
+    fontSize: "2em",
+    width: "60%",
   },
   metricBody__chartContainer: {
     alignItems: "center",
@@ -190,7 +203,7 @@ const MetricDisplay = () => {
   }
 
   const cards = activeMetrics.map((metricName) => 
-    <div key={metricName} id={metricName} onClick={() => removeMetric(metricName)}>{metricName}</div>
+    <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>{metricName}</div>
   );
 
   return (
@@ -246,6 +259,8 @@ const MetricDisplay = () => {
           <Line yAxisId="casingPressure" type="monotone" dataKey="casingPressureValue" stroke="#e9ce2c" dot={false} /> : ''}
           {activeMetrics.includes("waterTemp") ?
           <Line yAxisId="waterTemp" type="monotone" dataKey="waterTempValue" stroke="#03f7eb" dot={false} /> : ''}
+
+          <Tooltip />
         </LineChart>
 
       </div>
