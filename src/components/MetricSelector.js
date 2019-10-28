@@ -44,7 +44,6 @@ export default (props) => {
   const handleChange = name => event => {
     if (name === "activeMetrics" && !props.activeMetrics.includes(event.target.value)) {
       props.setActiveMetrics(prev => [...prev, event.target.value]);
-      console.log(props.activeMetrics);
     }
   };
 
