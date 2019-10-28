@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 
-
 import MetricSelector from "./MetricSelector";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import HistoricMetrics from "./HistoricMetrics";
+import MetricCards from "./MetricCards";
 
 const useStyles = makeStyles({
   metricWrapper: {
@@ -26,22 +26,6 @@ const useStyles = makeStyles({
     height: "100%",
     justifyContent: "flex-start",
     width: "80%",
-  },
-  metricHeader__card: {
-    alignItems: "center",
-    background: "rgb(39,49,66)",
-    borderRadius: "5px",
-    color: "white",
-    display: "flex",
-    flexDirection: "column",
-    fontSize: "1.3em",
-    height: "70%",
-    margin: "0.8em",
-    padding: "1em",
-  },
-  close: {
-    color: "red",
-    cursor: "pointer",
   },
   metricHeader__inputSelectionContainer: {
     alignItems: "center",
@@ -175,30 +159,20 @@ const MetricDisplay = () => {
 
   }, [data, error, setAllMetrics, setLatestMetrics]);
 
-  const removeMetric = metricName => {
-    setActiveMetrics(activeMetrics.filter(metric => metric !== metricName));
-  }
-
   if (fetching || allMetrics.tubingPressure === undefined) { return <LinearProgress />;
   } else {
-
-  const cards = activeMetrics.map((metricName) => 
-    <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
-      <span>{metricName}</span>
-      <span>{latestMetrics[metricName].value}</span>
-      <span/>
-      <span className={classes.close}>[Remove]</span>
-    </div>
-  );
 
   return (
     <div className={classes.metricWrapper}>
       <div className={classes.metricHeader}>
         <div className={classes.metricHeader__cardContainer}>
-          {cards}
+          <MetricCards 
+            activeMetrics={activeMetrics} setActiveMetrics={setActiveMetrics}
+            latestMetrics={latestMetrics} />
         </div>
         <div className={classes.metricHeader__inputSelectionContainer}>
-          <MetricSelector activeMetrics={activeMetrics} setActiveMetrics={setActiveMetrics} />
+          <MetricSelector 
+            activeMetrics={activeMetrics} setActiveMetrics={setActiveMetrics} />
         </div>
       </div>
       <div className={classes.metricBody__chartContainer}>
