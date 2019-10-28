@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Provider, createClient, useQuery } from "urql";
 
-import MetricSelector from "./MetricSelector";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import HistoricMetrics from "./HistoricMetrics";
 import MetricCards from "./MetricCards";
+import MetricSelector from "./MetricSelector";
+import MetricHistory from "./MetricHistory";
 
 const useStyles = makeStyles({
   metricWrapper: {
@@ -176,7 +176,7 @@ const MetricDisplay = () => {
         </div>
       </div>
       <div className={classes.metricBody__chartContainer}>
-        <HistoricMetrics 
+        <MetricHistory
           activeMetrics={activeMetrics} setActiveMetrics={setActiveMetrics}
           allMetrics={allMetrics} latestMetrics={latestMetrics}/>
       </div>
