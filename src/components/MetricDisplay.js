@@ -170,7 +170,6 @@ const MetricDisplay = () => {
                    "waterTemp": waterTemp.measurements});
 
     const {tubingPressureLatest, flareTempLatest, injValveOpenLatest, oilTempLatest, casingPressureLatest, waterTempLatest } = data;
-    console.log(tubingPressureLatest);
 
     setLatestMetrics({"tubingPressure": tubingPressureLatest, 
                       "flareTemp": flareTempLatest, 
@@ -299,12 +298,30 @@ const MetricDisplay = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" interval={200}/>
 
-          <YAxis yAxisId="tubingPressure" hide={activeMetrics.includes("tubingPressure") ? false : true} />
-          <YAxis yAxisId="flareTemp" hide={activeMetrics.includes("flareTemp") ? false : true} />
-          <YAxis yAxisId="injValveOpen" hide={activeMetrics.includes("injValveOpen") ? false : true} />
-          <YAxis yAxisId="oilTemp" hide={activeMetrics.includes("oilTemp") ? false : true} />
-          <YAxis yAxisId="casingPressure" hide={activeMetrics.includes("casingPressure") ? false : true} />
-          <YAxis yAxisId="waterTemp" hide={activeMetrics.includes("waterTemp") ? false : true} />
+          <YAxis 
+            yAxisId="tubingPressure" 
+            label={{ value: 'PSI', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("tubingPressure") ? false : true} />
+          <YAxis 
+            yAxisId="flareTemp" 
+            label={{ value: 'F', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("flareTemp") ? false : true} />
+          <YAxis 
+            yAxisId="injValveOpen" 
+            label={{ value: '%', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("injValveOpen") ? false : true} />
+          <YAxis 
+            yAxisId="oilTemp" 
+            label={{ value: 'F', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("oilTemp") ? false : true} />
+          <YAxis 
+            yAxisId="casingPressure"
+            label={{ value: 'PSI', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("casingPressure") ? false : true} />
+          <YAxis 
+            yAxisId="waterTemp" 
+            label={{ value: 'F', offset: 10, position: 'top' }}
+            hide={activeMetrics.includes("waterTemp") ? false : true} />
 
           {activeMetrics.includes("tubingPressure") ?
           <Line 
