@@ -21,9 +21,10 @@ const useStyles = makeStyles({
   metricHeader__cardContainer: {
     alignItems: "center",
     display: "flex",
+    flexWrap: "wrap",
     height: "100%",
     justifyContent: "flex-start",
-    width: "70%",
+    width: "80%",
   },
   metricHeader__card: {
     alignItems: "center",
@@ -31,21 +32,22 @@ const useStyles = makeStyles({
     borderRadius: "5px",
     color: "white",
     display: "flex",
+    fontSize: "1.3em",
     height: "70%",
-    margin: "1em",
+    margin: "0.8em",
     padding: "1em",
   },
   metricHeader__inputSelectionContainer: {
     alignItems: "center",
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "start",
     height: "100%",
-    width: "30%",
+    width: "20%",
   },
   metricHeader__inputSelection: {
     background: "white",
     fontSize: "2em",
-    width: "60%",
+    width: "70%",
   },
   metricBody__chartContainer: {
     alignItems: "center",
