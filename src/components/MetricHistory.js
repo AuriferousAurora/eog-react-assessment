@@ -36,37 +36,20 @@ export default (props) => {
     chartData.push(chartItem);
   }
 
+  const yAxes = Object.keys(props.allMetrics).map((metric) => 
+    <YAxis 
+      key={metric} yAxisId={metric} 
+      label={{ value: props.allMetrics[metric][0].unit, offset: 10, position: 'top' }}
+      hide={props.activeMetrics.includes(metric) ? false : true} />
+  )
+
   return (
     <LineChart 
       width={1200} height={400} data={chartData}
       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="time" interval={200}/>
-
-      <YAxis 
-        yAxisId="tubingPressure" 
-        label={{ value: 'PSI', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("tubingPressure") ? false : true} />
-      <YAxis 
-        yAxisId="flareTemp" 
-        label={{ value: 'F', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("flareTemp") ? false : true} />
-      <YAxis 
-        yAxisId="injValveOpen" 
-        label={{ value: '%', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("injValveOpen") ? false : true} />
-      <YAxis 
-        yAxisId="oilTemp" 
-        label={{ value: 'F', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("oilTemp") ? false : true} />
-      <YAxis 
-        yAxisId="casingPressure"
-        label={{ value: 'PSI', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("casingPressure") ? false : true} />
-      <YAxis 
-        yAxisId="waterTemp" 
-        label={{ value: 'F', offset: 10, position: 'top' }}
-        hide={props.activeMetrics.includes("waterTemp") ? false : true} />
+      {yAxes}
 
       {props.activeMetrics.includes("tubingPressure") ?
       <Line 
