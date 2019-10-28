@@ -32,10 +32,15 @@ const useStyles = makeStyles({
     borderRadius: "5px",
     color: "white",
     display: "flex",
+    flexDirection: "column",
     fontSize: "1.3em",
     height: "70%",
     margin: "0.8em",
     padding: "1em",
+  },
+  close: {
+    color: "red",
+    cursor: "pointer",
   },
   metricHeader__inputSelectionContainer: {
     alignItems: "center",
@@ -141,7 +146,9 @@ const MetricDisplay = () => {
   const [latestMetrics, setLatestMetrics] = useState({});
 
   const [result] = useQuery({
-    query: query
+    query: query,
+    requestPolicy: 'network-only',
+    pollInterval: 1300
   });
 
   const { fetching, data, error } = result
@@ -163,7 +170,6 @@ const MetricDisplay = () => {
                    "waterTemp": waterTemp.measurements});
 
     const {tubingPressureLatest, flareTempLatest, injValveOpenLatest, oilTempLatest, casingPressureLatest, waterTempLatest } = data;
-    console.log(tubingPressureLatest);
 
     setLatestMetrics({"tubingPressure": tubingPressureLatest, 
                       "flareTemp": flareTempLatest, 
@@ -250,8 +256,10 @@ const MetricDisplay = () => {
 
   const cards = activeMetrics.map((metricName) => 
     <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
-      {metricName}
-      {latestMetrics[metricName].value}
+      <span>{metricName}</span>
+      <span>{latestMetrics[metricName].value}</span>
+      <span/>
+      <span className={classes.close}>[Remove]</span>
       </div>
   );
 
@@ -303,7 +311,7 @@ const MetricDisplay = () => {
           {activeMetrics.includes("injValveOpen") ?
           <Line yAxisId="injValveOpen" type="monotone" dataKey="injValveOpenValue" stroke="#7bc950" dot={false} /> : ''}
           {activeMetrics.includes("oilTemp") ?
-          <Line yAxisId="oilTemp" type="monotone" dataKey="oilTempValue" stroke="#ddf0ff" dot={false} /> : ''}
+          <Line yAxisId="oilTemp" type="monotone" dataKey="oilTempValue" stroke="#e11584" dot={false} /> : ''}
           {activeMetrics.includes("casingPressure") ?
           <Line yAxisId="casingPressure" type="monotone" dataKey="casingPressureValue" stroke="#e9ce2c" dot={false} /> : ''}
           {activeMetrics.includes("waterTemp") ?
