@@ -2,14 +2,23 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-
-const useStyles = makeStyles({
-  metricHeader__inputSelection: {
-    background: "white",
-    fontSize: "2em",
-    width: "70%",
-  }
-});
+const useStyles = makeStyles(theme => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+  menu: {
+    width: 200,
+  },
+    metricHeader__inputSelection: {
+      width: "70%",
+    }
+}));
 
 const metricInputs = [
   {
@@ -49,19 +58,21 @@ export default (props) => {
 
   return (
     <TextField
-      id="standard-select-currency"
+      id="metric-select-input-field"
       className={classes.metricHeader__inputSelection}
       select
       label="Select Metric"
       value={metricInputs}
       onChange={handleChange('activeMetrics')}
       SelectProps={{ MenuProps: { className: classes.menu, }, }}
-      margin="normal">
+      margin="normal"
+      variant="outlined">
       {metricInputs.map(option => (
         <MenuItem key={option.value} value={option.value}>
           {option.label}
         </MenuItem>
       ))}
+    
     </TextField>
   );
 };

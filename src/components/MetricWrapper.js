@@ -11,12 +11,12 @@ const useStyles = makeStyles({
   metricWrapper: {
     display: "flex",
     flexDirection: "column",
-    height: "100%",
+    height: "90%",
     width: "100%",
   },
   metricHeader: {
     display: "flex",
-    height: "20%",
+    height: "15%",
     width: "100%",
   },
   metricHeader__cardContainer: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   metricBody__chartContainer: {
     alignItems: "center",
     display: "flex",
-    height: "100%",
+    height: "85%",
     justifyContent: "center",
   }
 });

@@ -7,19 +7,19 @@ import Weather from "./Weather";
 
 const useStyles = makeStyles({
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
+    height: '10%'
   }
 });
 
 export default () => {
   const classes = useStyles();
 
-  const name = "Kyle Lang's";
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" color="inherit" className={classes.grow}>
-          {name} EOG React Visualization Assessment
+          React Metric Visualization Application
         </Typography>
         <Weather />
       </Toolbar>

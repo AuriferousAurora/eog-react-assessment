@@ -9,8 +9,7 @@ const useStyles = makeStyles({
     color: "white",
     display: "flex",
     flexDirection: "column",
-    fontSize: "1.3em",
-    height: "70%",
+    height: "90%",
     margin: "0.8em",
     padding: "1em",
   },
@@ -29,10 +28,9 @@ export default (props) => {
 
   const cards = props.activeMetrics.map((metricName) => 
     <div key={metricName} className={classes.metricHeader__card} onClick={() => removeMetric(metricName)}>
-      <span>{metricName}</span>
-      <span>{props.latestMetrics[metricName].value}</span>
-      <span/>
-      <span className={classes.close}>[Remove]</span>
+      <div>{metricName}</div>
+      <div>{props.latestMetrics[metricName].value}</div>
+      <div className={classes.close}>[Remove]</div>
     </div>
   );
 
